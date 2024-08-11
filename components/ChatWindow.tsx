@@ -1,18 +1,18 @@
 // components/ChatWindow.tsx
-import React from "react";
+import React, { Dispatch } from "react";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
-import { ChatContextType } from "@/lib/types";
+import { ChatContextType, InitialMessageContext } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 type Props = {
-    messageDispatch:any,
-    messageContext:any
+    messageDispatch:Dispatch<{ type: string; value: string }>;
+    messageContext:InitialMessageContext
   chatContext: ChatContextType;
-  dispatch:any
+  dispatch:Dispatch<{ type: string; value: number | null}>
 };
 const ChatWindow = ({ messageDispatch,messageContext,chatContext,dispatch }: Props) => {
   const fetchMessages = async (chatId: number | null) => {
-    const response = await fetch("/api/message/get-chat-messages", {
+    const response = await fetch("/api/message/getChatMessages", {
       method: "POST",
       body: JSON.stringify({
         chatId: chatId,
@@ -28,7 +28,7 @@ const ChatWindow = ({ messageDispatch,messageContext,chatContext,dispatch }: Pro
     queryKey: ["getMessages", chatContext.currentChat],
     queryFn: async () => await fetchMessages(chatContext.currentChat),
   });
-
+console.log(data?.data?.messages)
   return (
     <div className="flex flex-col h-full rounded-xl bg-white">
       <div className="flex-1 overflow-y-auto">

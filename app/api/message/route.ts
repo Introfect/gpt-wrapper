@@ -65,28 +65,26 @@ export async function POST(req: Request) {
     const createChat = await db.chat.create({
       data: {
         messages: {
-          create: chat,
+          create: chat,  // The user's first message is created here.
         },
         chatTopic: String(chatTopic.choices[0].message.content),
       },
     });
-    await db.message.create({
-      data: {
-        content: chat.content,
-        role: "user",
-        chatId: createChat.id,
-      },
-    });
+    
+    // No need to create the message again here
+    
+    // Fetch context messages, which now include the user's first message.
     const contextMessages = await db.message.findMany({
       where: {
         chatId: createChat.id,
       },
     });
-
+    
     const completion = await openai.chat.completions.create({
-      messages: contextMessages,
+      messages: contextMessages,  // This includes the first message.
       model: "gpt-4o-mini",
     });
+    
     if (completion) {
       await db.message.create({
         data: {
@@ -96,8 +94,9 @@ export async function POST(req: Request) {
         },
       });
     }
+    
     return NextResponse.json({
-      data: { data: completion.choices[0].message,id:createChat.id },
+      data: { data: completion.choices[0].message.content, id: createChat.id },
     });
   }
 }

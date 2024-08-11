@@ -4,12 +4,12 @@ import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import { useQuery } from "@tanstack/react-query";
 import chatReducer from "@/lib/chatReducer";
-import { ChatContextType } from "@/lib/types";
+import { ChatContextType, InitialMessageContext } from "@/lib/types";
 import messageReducer from "@/lib/messageReducer";
 const initialChatContext: ChatContextType = {
   currentChat: null,
 };
-const initialMessageContext = {
+const initialMessageContext:InitialMessageContext = {
   content: "",
 };
 const GptWindow: React.FC = () => {
@@ -30,7 +30,7 @@ const GptWindow: React.FC = () => {
     }
     return response.json();
   };
-  const { data } = useQuery({
+  const { data,isFetching } = useQuery({
     queryKey: ["getChats"],
     queryFn: fetchChats,
   });
@@ -42,7 +42,7 @@ const GptWindow: React.FC = () => {
           isChatListVisible ? "block" : "hidden"
         } md:block transition-all duration-300 ease-in-out overflow-y-auto`}
       >
-        <div className="flex justify-between items-center px-6 border-b border-white/20 pb-4 mt-10">
+        <div className=" flex z-20  justify-between items-center px-6 border-b border-white/20 pb-4 mt-10">
           <h2 className="text-xl font-bold">Chats</h2>
           <button
             type="submit"
@@ -57,6 +57,7 @@ const GptWindow: React.FC = () => {
           </button>
         </div>
         <ChatList
+        isFetching={isFetching}
           chatContext={chatContext}
           dispatch={dispatch}
           data={data?.data?.chats}
