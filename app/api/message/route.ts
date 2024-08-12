@@ -65,15 +65,12 @@ export async function POST(req: Request) {
     const createChat = await db.chat.create({
       data: {
         messages: {
-          create: chat,  // The user's first message is created here.
+          create: chat,  
         },
         chatTopic: String(chatTopic.choices[0].message.content),
       },
     });
     
-    // No need to create the message again here
-    
-    // Fetch context messages, which now include the user's first message.
     const contextMessages = await db.message.findMany({
       where: {
         chatId: createChat.id,

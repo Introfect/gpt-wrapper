@@ -22,13 +22,13 @@ const ChatMessages = ({messages}:Props) => {
     scrollToBottom();
   }, [messages]);
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <ul className="flex-1 overflow-y-auto p-4 space-y-4">
     {messages?.map((message) => (
-      <div 
+      <li 
         key={message.id} 
         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
       >
-        <div
+        <span
           className={`max-w-[50%] w-fit p-3 rounded-xl ${
             message.role === 'user' 
               ? 'border-2 text-black' 
@@ -36,11 +36,11 @@ const ChatMessages = ({messages}:Props) => {
           }`}
         >
           <p className="break-words">{message.content}</p>
-        </div>
-      </div>
+        </span>
+      </li>
     ))}
     <div ref={messagesEndRef} />
-  </div>
+  </ul>
   );
 };
 

@@ -15,5 +15,5 @@ export type ChatContextType={
     currentChat: number | null
 }
 export type InitialMessageContext={
-    content: string
+    content: string | null
 }

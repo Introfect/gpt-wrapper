@@ -1,6 +1,6 @@
 export default function messageReducer(
   changeMessage:any,
-  action: { type: string; value: string }
+  action: { type: string; value: string | null }
 ) {
     switch (action.type) {
         case "changeMessage": {

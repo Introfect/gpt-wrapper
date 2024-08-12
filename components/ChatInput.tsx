@@ -1,14 +1,15 @@
 "use client";
+import { useSendMessages } from "@/lib/queryHooks";
 import { ChatContextType, InitialMessageContext } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 import React, { useState, FormEvent, Dispatch } from "react";
 
 type Props = {
-  messageDispatch: Dispatch<{ type: string; value: string }>;
+  messageDispatch: Dispatch<{ type: string; value: string | null }>;
   messageContext: InitialMessageContext;
   chatContext: ChatContextType;
-  dispatch: Dispatch<{ type: string; value: number | null}>;
+  dispatch: Dispatch<{ type: string; value: number | null }>;
 };
 const ChatInput = ({
   messageDispatch,
@@ -17,49 +18,27 @@ const ChatInput = ({
   dispatch,
 }: Props) => {
   const queryClient = useQueryClient();
-  const handleSubmit = (): void => {
+  const { handleSend, isPending } = useSendMessages({
+    chatContext,
+    messageContext,
+    queryClient,
+    messageDispatch,
+    dispatch,
+  });
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
     handleSend();
   };
-  const { mutate: handleSend, isPending } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/message", {
-        method: "POST",
-        body: JSON.stringify({
-          chat: {
-            chatId: chatContext.currentChat,
-            role: "user",
-            content: messageContext.content,
-          },
-        }),
-      });
-      if (response) {
-        queryClient.invalidateQueries({ queryKey: ["getMessages"] });
-        messageDispatch({
-          type: "changeMessage",
-          value: "",
-        });
-        const data = await response.json();
-        if (chatContext.currentChat === null) {
-          dispatch({
-            type: "changeChat",
-            value: data.data.id,
-          });
-          queryClient.invalidateQueries({ queryKey: ["getChats"] });
-        }
-      }
-      return response;
-    },
-  });
 
   return (
     <div className="py-4 px-20">
       <div className="flex justify-center">
         {isPending ? <LoaderCircle className="w-4 animate-spin" /> : null}
       </div>
-      <div className="flex space-x-4">
+      <form onSubmit={(e) => handleSubmit(e)} className="flex space-x-4">
         <input
           type="text"
-          value={messageContext.content}
+          value={messageContext.content === null ? "" : messageContext.content}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             messageDispatch({
               type: "changeMessage",
@@ -70,13 +49,12 @@ const ChatInput = ({
           placeholder="Type your message..."
         />
         <button
-          onClick={handleSubmit}
-          type="button"
+          type="submit"
           className="bg-black text-white py-2 px-4 hover:bg-white hover:text-black hover:border-2 rounded-xl hover:border-black"
         >
           Send
         </button>
-      </div>
+      </form>
     </div>
   );
 };

@@ -1,16 +1,17 @@
 "use client";
 import React, { useReducer, useState } from "react";
-import ChatList from "./ChatList";
+import ChatList, { Chat } from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import { useQuery } from "@tanstack/react-query";
 import chatReducer from "@/lib/chatReducer";
 import { ChatContextType, InitialMessageContext } from "@/lib/types";
 import messageReducer from "@/lib/messageReducer";
+import { useFetchChats } from "@/lib/queryHooks";
 const initialChatContext: ChatContextType = {
   currentChat: null,
 };
-const initialMessageContext:InitialMessageContext = {
-  content: "",
+const initialMessageContext: InitialMessageContext = {
+  content: null,
 };
 const GptWindow: React.FC = () => {
   const [isChatListVisible, setIsChatListVisible] = useState<boolean>(false);
@@ -23,17 +24,7 @@ const GptWindow: React.FC = () => {
   const toggleChatList = (): void => {
     setIsChatListVisible(!isChatListVisible);
   };
-  const fetchChats = async () => {
-    const response = await fetch("/api/chat");
-    if (!response.ok) {
-      throw new Error("Failed to fetch chats");
-    }
-    return response.json();
-  };
-  const { data,isFetching } = useQuery({
-    queryKey: ["getChats"],
-    queryFn: fetchChats,
-  });
+  const { data, isFetching } = useFetchChats();
 
   return (
     <div className="flex h-screen bg-black/90 text-orange-500">
@@ -45,7 +36,7 @@ const GptWindow: React.FC = () => {
         <div className=" flex z-20  justify-between items-center px-6 border-b border-white/20 pb-4 mt-10">
           <h2 className="text-xl font-bold">Chats</h2>
           <button
-            type="submit"
+            type="button"
             onClick={() => {
               dispatch({
                 type: "changeChat",
@@ -57,10 +48,10 @@ const GptWindow: React.FC = () => {
           </button>
         </div>
         <ChatList
-        isFetching={isFetching}
+          isFetching={isFetching}
           chatContext={chatContext}
           dispatch={dispatch}
-          data={data?.data?.chats}
+          data={data?.data.chats || []}
         />
       </div>
       <div className="flex-1">

@@ -3,7 +3,7 @@ import { ChatContextType } from "@/lib/types";
 import React, { Dispatch } from "react";
 import { LoaderCircle } from "lucide-react";
 
-interface Chat {
+export type Chat= {
   id: number;
   chatTopic: string;
   createdAt: string;
