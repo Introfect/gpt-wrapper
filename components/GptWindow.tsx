@@ -56,6 +56,7 @@ const GptWindow: React.FC = () => {
       </div>
       <div className="flex-1">
         <button
+        type="button"
           className="md:hidden absolute top-4 left-4 z-10 bg-orange-500 text-black p-2 rounded"
           onClick={toggleChatList}
         >
