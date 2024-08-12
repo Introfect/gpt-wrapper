@@ -5,12 +5,14 @@ import ChatInput from "./ChatInput";
 import { ChatContextType, InitialMessageContext } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchMessages } from "@/lib/queryHooks";
+
 type Props = {
   messageDispatch: Dispatch<{ type: string; value: string | null }>;
   messageContext: InitialMessageContext;
   chatContext: ChatContextType;
   dispatch: Dispatch<{ type: string; value: number | null }>;
 };
+
 const ChatWindow = ({
   messageDispatch,
   messageContext,

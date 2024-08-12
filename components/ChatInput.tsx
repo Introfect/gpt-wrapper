@@ -24,6 +24,18 @@ const ChatInput = ({
     queryClient,
     messageDispatch,
     dispatch,
+    onSuccess(response) {
+      if (chatContext.currentChat===null) {
+        dispatch({
+          type: "changeChat",
+          value: response.data.id,
+        });
+      }
+      messageDispatch({
+        type: "changeMessage",
+        value: null,
+      });
+    },
   });
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();

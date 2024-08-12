@@ -1,5 +1,7 @@
+import { InitialMessageContext } from "./types";
+
 export default function messageReducer(
-  changeMessage:any,
+  changeMessage:InitialMessageContext,
   action: { type: string; value: string | null }
 ) {
     switch (action.type) {

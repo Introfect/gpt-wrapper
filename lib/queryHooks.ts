@@ -7,6 +7,7 @@ type SendMessageProp = {
   queryClient: QueryClient;
   messageDispatch: Dispatch<{ type: string; value: string | null }>;
   dispatch: Dispatch<{ type: string; value: number | null }>;
+  onSuccess?: (response: ResponseSendMessage) => void;
 };
 type ResponseSendMessage = {
   data: {
@@ -30,6 +31,7 @@ export function useSendMessages({
   queryClient,
   messageDispatch,
   dispatch,
+  onSuccess,
 }: SendMessageProp) {
   const { mutate: handleSend, isPending } = useMutation({
     mutationFn: async () => {
@@ -47,20 +49,12 @@ export function useSendMessages({
       return (await response.json()) as ResponseSendMessage;
     },
     onSuccess: (response) => {
-      console.log(response);
-      const data = response;
-      messageDispatch({
-        type: "changeMessage",
-        value: null,
-      });
       if (chatContext.currentChat === null) {
-        dispatch({
-          type: "changeChat",
-          value: data.data.id,
-        });
         queryClient.invalidateQueries({ queryKey: ["getChats"] });
       }
       queryClient.invalidateQueries({ queryKey: ["getMessages"] });
+
+      onSuccess?.(response);
     },
   });
 
@@ -78,7 +72,7 @@ export function useFetchMessages(chatContext: ChatContextType) {
     if (!response.ok) {
       throw new Error("Failed to fetch chats");
     }
-    return await response.json() as ResponseMessages;
+    return (await response.json()) as ResponseMessages;
   };
   const { data, isPending } = useQuery({
     queryKey: ["getMessages", chatContext.currentChat],

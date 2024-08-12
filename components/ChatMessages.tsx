@@ -23,7 +23,7 @@ const ChatMessages = ({messages}:Props) => {
   }, [messages]);
   return (
     <ul className="flex-1 overflow-y-auto p-4 space-y-4">
-    {messages?.map((message) => (
+    {messages.map((message) => (
       <li 
         key={message.id} 
         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
