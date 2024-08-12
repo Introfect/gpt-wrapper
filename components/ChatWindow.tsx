@@ -3,7 +3,6 @@ import React, { Dispatch } from "react";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { ChatContextType, InitialMessageContext } from "@/lib/types";
-import { useQuery } from "@tanstack/react-query";
 import { useFetchMessages } from "@/lib/queryHooks";
 
 type Props = {

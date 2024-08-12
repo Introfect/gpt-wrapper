@@ -1,9 +1,9 @@
 "use client";
 import { useSendMessages } from "@/lib/queryHooks";
 import { ChatContextType, InitialMessageContext } from "@/lib/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
-import React, { useState, FormEvent, Dispatch } from "react";
+import React, { Dispatch } from "react";
 
 type Props = {
   messageDispatch: Dispatch<{ type: string; value: string | null }>;
@@ -61,8 +61,9 @@ const ChatInput = ({
           placeholder="Type your message..."
         />
         <button
+        disabled={isPending}
           type="submit"
-          className="bg-black text-white py-2 px-4 hover:bg-white hover:text-black hover:border-2 rounded-xl hover:border-black"
+          className={`bg-black text-white py-2 px-4 hover:bg-white cursor hover:text-black hover:border-2 rounded-xl hover:border-black ${isPending?'cursor-not-allowed bg-black/50 hover:bg-black/50 hover:border-none hover:text-white':null}`}
         >
           Send
         </button>
